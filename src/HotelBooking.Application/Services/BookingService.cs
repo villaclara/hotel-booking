@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HotelBooking.Application.Interfaces;
 
-namespace HotelBooking.Application.Services
+namespace HotelBooking.Application.Services;
+
+public class BookingService
 {
-	internal class BookingService
+	private readonly IBookingRepository _bookingRepository;
+
+	public BookingService(IBookingRepository bookingRepository)
 	{
+		_bookingRepository = bookingRepository;
+	}
+
+	public void geal()
+	{
+		_bookingRepository.GetAllWithParamsAsync();
 	}
 }
