@@ -16,7 +16,7 @@ public class AppDbContext : IdentityDbContext
 	{
 		base.OnModelCreating(builder);
 
-		builder.Entity<IdentityUser>().ToTable("Users");    // idk about it.	
+		builder.Entity<IdentityUser>().ToTable("Users");    // TODO - idk about it.	
 		builder.Entity<Hotel>().ToTable("Hotels");
 		builder.Entity<Room>().ToTable("Rooms");
 		builder.Entity<Booking>().ToTable("Bookings");
@@ -57,12 +57,6 @@ public class AppDbContext : IdentityDbContext
 
 			entity.Property(b => b.CheckIn).IsRequired();
 			entity.Property(b => b.CheckOut).IsRequired();
-		});
-
-		builder.Entity<SimpleUser>(entity =>
-		{
-			entity.HasKey(su => su.Id);
-			entity.Property(su => su.Email).IsRequired().HasMaxLength(200);
 		});
 	}
 }

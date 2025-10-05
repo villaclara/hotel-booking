@@ -1,4 +1,6 @@
-﻿namespace HotelBooking.Application.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HotelBooking.Application.Dtos;
 
 public class BookingDto
 {
@@ -8,7 +10,11 @@ public class BookingDto
 
 	public int RoomId { get; set; }
 
+	[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+	[Required]
 	public DateTime CheckIn { get; set; }
 
+	[DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
+	[Required]
 	public DateTime CheckOut { get; set; }
 }
