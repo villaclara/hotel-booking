@@ -33,7 +33,7 @@ public class HotelRepository : IHotelRepository
 		return true;
 	}
 
-	public async Task<Hotel?> FindByIdAsync(int id)
+	public async Task<Hotel?> GetByIdAsync(int id)
 	{
 		return await _context.Hotels.Include(h => h.Rooms).FirstOrDefaultAsync(h => h.Id == id);
 	}
@@ -47,4 +47,7 @@ public class HotelRepository : IHotelRepository
 		await _context.SaveChangesAsync();
 		return hotel;
 	}
+
+	public async Task<bool> ExistsAsync(int id) =>
+		await _context.Hotels.AnyAsync(h => h.Id == id);
 }

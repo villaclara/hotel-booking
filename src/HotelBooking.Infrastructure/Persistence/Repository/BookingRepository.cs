@@ -32,7 +32,7 @@ public class BookingRepository : IBookingRepository
 		return true;
 	}
 
-	public async Task<Booking?> FindByIdAsync(int id) =>
+	public async Task<Booking?> GetByIdAsync(int id) =>
 		await _context.Bookings.FirstOrDefaultAsync(b => b.Id == id);
 
 	public async Task<IEnumerable<Booking>> GetAllWithParamsAsync(string? userId = null)
@@ -51,5 +51,12 @@ public class BookingRepository : IBookingRepository
 		_context.Bookings.Update(booking);
 		await _context.SaveChangesAsync();
 		return booking;
+	}
+
+	public async Task<bool> IsRoomAvailableAsync(int id, DateTime checkin, DateTime checkout)
+	{
+		return !await _context.Bookings
+		.AnyAsync(b => b.RoomId == id &&
+			b.CheckIn < checkout && checkin < b.CheckOut);
 	}
 }
