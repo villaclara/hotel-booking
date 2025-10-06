@@ -1,4 +1,4 @@
-﻿using HotelBooking.Application.Dtos;
+﻿using HotelBooking.Application.Dtos.Hotel;
 using HotelBooking.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +42,24 @@ public class HotelController : ControllerBase
 		}
 
 		return Ok(hotel);
+	}
+
+	[HttpGet("free")]
+	public async Task<IActionResult> SearchAvailableHotelsForDates([FromQuery] DateTime checkIn, [FromQuery] DateTime checkOut, [FromQuery] string? city = null)
+	{
+		if (checkIn == default || checkOut == default)
+		{
+			return BadRequest(new { error = "Invalid date range." });
+		}
+
+		city = city?.Trim().ToLower();
+
+		var hotels = await _hotelService.GetAvailableHotelsForDates(checkIn, checkOut, city);
+
+		if (!hotels.Any())
+			return NotFound(new { message = "No hotels or rooms available in the selected date range." });
+
+		return Ok(hotels);
 	}
 
 	[HttpPost(Name = "AddHotel")]

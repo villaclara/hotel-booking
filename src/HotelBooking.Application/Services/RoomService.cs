@@ -1,4 +1,4 @@
-﻿using HotelBooking.Application.Dtos;
+﻿using HotelBooking.Application.Dtos.Room;
 using HotelBooking.Application.Interfaces;
 using HotelBooking.Domain.Entities;
 using Microsoft.Extensions.Logging;

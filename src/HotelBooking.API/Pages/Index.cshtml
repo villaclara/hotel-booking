@@ -1,0 +1,50 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Razor
+@model HotelBooking.API.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="bg-white shadow-lg rounded-2xl p-8 max-w-3xl mx-auto mt-8">
+    <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
+        Find the Perfect Hotel
+    </h1>
+    <form method="get" asp-page="/Hotels/Index" class="grid gap-4 md:grid-cols-3">
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">City</label>
+            <input type="text" name="city"
+                   class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Check-in</label>
+            <input type="date" name="checkIn"
+                   class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Check-out</label>
+            <input type="date" name="checkOut"
+                   class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+        <div class="md:col-span-3 text-center">
+            <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg mt-4">
+                Search Hotels
+            </button>
+        </div>
+    </form>
+</div>
+
+@using Microsoft.AspNetCore.Razor.TagHelpers
+
+@{
+    var tagHelperActivator = HttpContext.RequestServices.GetService(typeof(ITagHelperActivator));
+}
+
+@if (tagHelperActivator == null)
+{
+    <p class="text-red-600 font-bold">❌ Tag Helpers are NOT active</p>
+}
+else
+{
+    <p class="text-green-600 font-bold">✅ Tag Helpers are active</p>
+}

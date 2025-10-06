@@ -1,4 +1,4 @@
-﻿using HotelBooking.Application.Dtos;
+﻿using HotelBooking.Application.Dtos.Hotel;
 using HotelBooking.Application.Interfaces;
 using HotelBooking.Domain.Entities;
 using Microsoft.Extensions.Logging;
@@ -74,6 +74,31 @@ public class HotelService
 			Name = h.Name,
 			Address = h.Address,
 			Description = h.Description,
+		});
+	}
+
+	public async Task<IEnumerable<HotelWithRoomsDto>> GetAvailableHotelsForDates(DateTime startDate, DateTime endDate, string? city)
+	{
+		if (startDate >= endDate)
+		{
+			throw new ArgumentException("Incorret dates range");
+		}
+
+		var hotels = await _hotelRepository.GetAllWithRoomsByDates(startDate, endDate, city);
+		return hotels.Select(h => new HotelWithRoomsDto
+		{
+			Id = h.Id,
+			Name = h.Name,
+			Address = h.Address,
+			Description = h.Description,
+			Rooms = [.. h.Rooms.Select(r => new Dtos.Room.RoomDto
+			{
+				Id = r.Id,
+				Capacity = r.Capacity,
+				HotelId = h.Id,
+				HotelName = h.Name,
+				PricePerNight = r.PricePerNight,
+			})],
 		});
 	}
 

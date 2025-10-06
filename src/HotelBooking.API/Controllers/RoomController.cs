@@ -1,4 +1,4 @@
-﻿using HotelBooking.Application.Dtos;
+﻿using HotelBooking.Application.Dtos.Room;
 using HotelBooking.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 

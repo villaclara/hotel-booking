@@ -1,16 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HotelBooking.Application.Dtos;
+namespace HotelBooking.Application.Dtos.Room;
 
-public class RoomDto
+public class CreateRoomDto
 {
-	public int Id { get; set; }
-
 	[Range(0, int.MaxValue)]
 	[Required]
 	public int HotelId { get; set; }
-
-	public string HotelName { get; set; } = default!;
 
 	[Range(0, int.MaxValue)]
 	public decimal PricePerNight { get; set; }

@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HotelBooking.Application.Dtos.Room;
 
-namespace HotelBooking.Application.Dtos;
+namespace HotelBooking.Application.Dtos.Hotel;
 
-/// <summary>
-/// Data transfer object to pass data between service and repository layers.
-/// </summary>
-public class HotelDto
+public class HotelWithRoomsDto
 {
 	/// <summary>
 	/// Gets or sets the Id of the Hotel.
@@ -15,18 +12,20 @@ public class HotelDto
 	/// <summary>
 	/// Gets or sets the Name of the hotel.
 	/// </summary>
-	[Required(ErrorMessage = "Hotel Name is mandatory.")]
 	public string Name { get; set; } = default!;
 
 	/// <summary>
 	/// Gets or sets the description of the hotel.
 	/// </summary>
-	[Required(ErrorMessage = "Hotel Description is mandatory.")]
 	public string Description { get; set; } = default!;
 
 	/// <summary>
 	/// Gets or sets the Address of the hotel.
 	/// </summary>
-	[Required(ErrorMessage = "Hotel City Address is mandatory.")]
 	public string Address { get; set; } = default!;
+
+	/// <summary>
+	/// Gets or sets the list of rooms of the hotel.
+	/// </summary>
+	public List<RoomDto> Rooms { get; set; } = [];
 }

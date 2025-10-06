@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddRazorPages();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -23,6 +25,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 	options.SignIn.RequireConfirmedAccount = false;
 	options.SignIn.RequireConfirmedAccount = false;
 
+	options.Password.RequireUppercase = false;
 	options.Password.RequireLowercase = false;
 	options.Password.RequiredLength = 4;
 	options.Password.RequireNonAlphanumeric = false;
@@ -30,12 +33,16 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 	.AddEntityFrameworkStores<AppDbContext>()
 	.AddDefaultTokenProviders();
 
+// TODO - idk if needed
+//builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddCookie();
+
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
 builder.Services.AddScoped<HotelService>();
 builder.Services.AddScoped<RoomService>();
+builder.Services.AddScoped<BookingService>();
 
 var app = builder.Build();
 
@@ -50,6 +57,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.MapRazorPages();
 app.MapControllers();
 
 app.Run();

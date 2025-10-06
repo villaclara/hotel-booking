@@ -39,7 +39,7 @@ public class HotelRepository : IHotelRepository
 	}
 
 	public async Task<IEnumerable<Hotel>> GetAllAsync() =>
-		await _context.Hotels.Include(h => h.Rooms).ToListAsync();
+		await _context.Hotels.ToListAsync();
 
 	public async Task<Hotel> UpdateAsync(Hotel hotel)
 	{
@@ -50,4 +50,23 @@ public class HotelRepository : IHotelRepository
 
 	public async Task<bool> ExistsAsync(int id) =>
 		await _context.Hotels.AnyAsync(h => h.Id == id);
+
+	public async Task<IEnumerable<Hotel>> GetAllWithRoomsByDates(DateTime? checkin, DateTime? checkout, string? city)
+	{
+		var query = _context.Hotels.Include(h => h.Rooms).ThenInclude(r => r.Bookings).AsQueryable();
+
+		if (!string.IsNullOrEmpty(city))
+		{
+			query = query.Where(h => h.Address.ToLower() == city.ToLower());
+		}
+
+		if (checkin.HasValue && checkout.HasValue)
+		{
+			query = query.Where(h =>
+						h.Rooms.Any(r =>
+							!r.Bookings.Any(b => b.CheckOut >= checkin && b.CheckIn <= checkout)));
+		}
+
+		return await query.ToListAsync();
+	}
 }
