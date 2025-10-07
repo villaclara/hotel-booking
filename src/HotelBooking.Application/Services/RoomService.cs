@@ -23,6 +23,7 @@ public class RoomService
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.PricePerNight, 1);
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.Capacity, 1);
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.HotelId, 1);
+		ArgumentNullException.ThrowIfNullOrEmpty(roomDto.Description);
 
 		var hotelExists = await _hotelRepository.ExistsAsync(roomDto.HotelId);
 		if (!hotelExists)
@@ -34,6 +35,7 @@ public class RoomService
 		var room = new Room
 		{
 			HotelId = roomDto.HotelId,
+			Description = roomDto.Description,
 			PricePerNight = roomDto.PricePerNight,
 			Capacity = roomDto.Capacity
 		};
@@ -51,6 +53,7 @@ public class RoomService
 		return new RoomDto
 		{
 			Id = created.Id,
+			Description = created.Description,
 			HotelId = created.HotelId,
 			HotelName = created.Hotel.Name,
 			PricePerNight = created.PricePerNight,
@@ -67,6 +70,7 @@ public class RoomService
 			? new RoomDto
 			{
 				Id = room.Id,
+				Description = room.Description,
 				HotelId = room.HotelId,
 				HotelName = room.Hotel.Name,
 				PricePerNight = room.PricePerNight,
@@ -83,6 +87,7 @@ public class RoomService
 		return rooms.Select(r => new RoomDto
 		{
 			Id = r.Id,
+			Description = r.Description,
 			HotelId = r.HotelId,
 			HotelName = r.Hotel.Name,
 			PricePerNight = r.PricePerNight,
@@ -95,6 +100,7 @@ public class RoomService
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.Id, 1);
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.PricePerNight, 1);
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.Capacity, 1);
+		ArgumentNullException.ThrowIfNullOrEmpty(roomDto.Description);
 
 		var existing = await _roomRepository.GetByIdAsync(roomDto.Id);
 		if (existing == null)
@@ -113,6 +119,7 @@ public class RoomService
 			return new RoomDto
 			{
 				Id = updated.Id,
+				Description = updated.Description,
 				HotelId = updated.HotelId,
 				HotelName = updated.Hotel.Name,
 				PricePerNight = updated.PricePerNight,

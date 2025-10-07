@@ -39,7 +39,7 @@ public class HotelRepository : IHotelRepository
 	}
 
 	public async Task<IEnumerable<Hotel>> GetAllAsync() =>
-		await _context.Hotels.ToListAsync();
+		await _context.Hotels.Include(h => h.Rooms).ToListAsync();
 
 	public async Task<Hotel> UpdateAsync(Hotel hotel)
 	{

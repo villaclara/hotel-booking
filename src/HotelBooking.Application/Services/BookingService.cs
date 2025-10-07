@@ -92,6 +92,21 @@ public class BookingService
 			CheckOut = b.CheckOut
 		});
 	}
+	public async Task<IEnumerable<BookingWithNamesDto>> GetAllWithNamesAsync(string? userId = null)
+	{
+		var bookings = await _bookingRepository.GetAllWithParamsAsync(userId);
+
+		return bookings.Select(b => new BookingWithNamesDto
+		{
+			Id = b.Id,
+			HotelName = b.Room.Hotel.Name,
+			RoomDescription = b.Room.Hotel.Description,
+			RoomId = b.RoomId,
+			UserId = b.UserId,
+			CheckIn = b.CheckIn,
+			CheckOut = b.CheckOut
+		});
+	}
 
 	public async Task<BookingDto?> GetByIdAsync(int bookingId)
 	{

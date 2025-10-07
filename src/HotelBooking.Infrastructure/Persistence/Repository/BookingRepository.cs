@@ -37,7 +37,7 @@ public class BookingRepository : IBookingRepository
 
 	public async Task<IEnumerable<Booking>> GetAllWithParamsAsync(string? userId = null)
 	{
-		var query = _context.Bookings.AsQueryable();
+		var query = _context.Bookings.Include(b => b.Room).ThenInclude(r => r.Hotel).AsQueryable();
 		if (userId is not null)
 		{
 			query = query.Where(b => b.UserId == userId);

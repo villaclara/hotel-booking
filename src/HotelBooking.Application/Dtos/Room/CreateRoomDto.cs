@@ -8,6 +8,9 @@ public class CreateRoomDto
 	[Required]
 	public int HotelId { get; set; }
 
+	[Required(ErrorMessage = "Room Description is mandatory.")]
+	public string Description { get; set; } = default!;
+
 	[Range(0, int.MaxValue)]
 	public decimal PricePerNight { get; set; }
 

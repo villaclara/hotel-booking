@@ -5,32 +5,32 @@
 }
 
 <div class="flex items-center justify-center min-h-[80vh]">
-    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <h1 class="text-2xl font-semibold text-gray-800 text-center mb-6">Create an Account</h1>
+    <div class="bg-gray-800 shadow-xl rounded-2xl p-8 w-full max-w-md">
+        <h1 class="text-2xl font-semibold text-gray-100 text-center mb-6">Create an Account</h1>
 
         <form method="post" class="space-y-4">
             <div>
-                <label asp-for="Input.Email" class="block text-gray-700 font-medium mb-1">Email</label>
+                <label asp-for="Input.Email" class="block text-gray-200 font-medium mb-1">Email</label>
                 <input asp-for="Input.Email" type="email"
-                       class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+                       class="w-full bg-gray-700 border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                        placeholder="you@example.com" />
-                <span asp-validation-for="Input.Email" class="text-red-500 text-sm"></span>
+                <span asp-validation-for="Input.Email" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label asp-for="Input.Password" class="block text-gray-700 font-medium mb-1">Password</label>
+                <label asp-for="Input.Password" class="block text-gray-200 font-medium mb-1">Password</label>
                 <input asp-for="Input.Password" type="password"
-                       class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+                       class="w-full bg-gray-700 border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                        placeholder="********" />
-                <span asp-validation-for="Input.Password" class="text-red-500 text-sm"></span>
+                <span asp-validation-for="Input.Password" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label asp-for="Input.ConfirmPassword" class="block text-gray-700 font-medium mb-1">Confirm Password</label>
+                <label asp-for="Input.ConfirmPassword" class="block text-gray-200 font-medium mb-1">Confirm Password</label>
                 <input asp-for="Input.ConfirmPassword" type="password"
-                       class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500"
+                       class="w-full bg-gray-700 border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                        placeholder="********" />
-                <span asp-validation-for="Input.ConfirmPassword" class="text-red-500 text-sm"></span>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-red-400 text-sm"></span>
             </div>
 
             <button type="submit"
@@ -38,10 +38,22 @@
                 Register
             </button>
 
-            <p class="text-center text-gray-600 text-sm mt-4">
+            <p class="text-center text-gray-400 text-sm mt-4">
                 Already have an account?
-                <a asp-page="/Account/Login" class="text-blue-600 hover:underline">Login</a>
+                <a asp-page="/Account/Login" class="text-blue-400 hover:underline">Login</a>
             </p>
         </form>
     </div>
 </div>
+
+<style>
+    /* Autofill for dark theme */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0px 1000px #374151 inset; /* bg-gray-700 */
+        -webkit-text-fill-color: #f9fafb; /* text-gray-100 */
+        transition: background-color 5000s ease-in-out 0s;
+    }
+</style>

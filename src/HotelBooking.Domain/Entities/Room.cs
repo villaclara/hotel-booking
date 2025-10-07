@@ -11,6 +11,11 @@ public class Room
 	public int Id { get; set; }
 
 	/// <summary>
+	/// Gets or sets the description for the room.
+	/// </summary>
+	public string Description { get; set; } = default!;
+
+	/// <summary>
 	/// Gets or sets the identifier of the hotel this room belongs to.
 	/// </summary>
 	public int HotelId { get; set; }

@@ -1,4 +1,5 @@
-﻿using HotelBooking.Application.Dtos.Hotel;
+﻿using System.Data;
+using HotelBooking.Application.Dtos.Hotel;
 using HotelBooking.Application.Interfaces;
 using HotelBooking.Domain.Entities;
 using Microsoft.Extensions.Logging;
@@ -65,6 +66,32 @@ public class HotelService
 			: null;
 	}
 
+	public async Task<HotelWithRoomsDto?> GetHotelWithRoomsById(int id)
+	{
+		ArgumentOutOfRangeException.ThrowIfLessThan(id, 1);
+
+		var hotel = await _hotelRepository.GetByIdAsync(id);
+
+		return hotel != null
+			? new HotelWithRoomsDto
+			{
+				Id = hotel.Id,
+				Name = hotel.Name,
+				Address = hotel.Address,
+				Description = hotel.Description,
+				Rooms = [.. hotel.Rooms.Select(r => new Dtos.Room.RoomDto
+			{
+				Id = r.Id,
+				Description = r.Description,
+				Capacity = r.Capacity,
+				HotelId = hotel.Id,
+				HotelName = hotel.Name,
+				PricePerNight = r.PricePerNight,
+			})],
+			}
+			: null;
+	}
+
 	public async Task<IEnumerable<HotelDto>> GetAllAsync()
 	{
 		var hotels = await _hotelRepository.GetAllAsync();
@@ -77,7 +104,60 @@ public class HotelService
 		});
 	}
 
-	public async Task<IEnumerable<HotelWithRoomsDto>> GetAvailableHotelsForDates(DateTime startDate, DateTime endDate, string? city)
+	public async Task<IEnumerable<HotelWithRoomsDto>> GetAllWithRoomsAsync()
+	{
+		var hotels = await _hotelRepository.GetAllAsync();
+		return hotels.Select(h => new HotelWithRoomsDto
+		{
+			Id = h.Id,
+			Name = h.Name,
+			Address = h.Address,
+			Description = h.Description,
+			Rooms = [.. h.Rooms.Select(r => new Dtos.Room.RoomDto
+			{
+				Id = r.Id,
+				Description = r.Description,
+				Capacity = r.Capacity,
+				HotelId = h.Id,
+				HotelName = h.Name,
+				PricePerNight = r.PricePerNight,
+			})],
+		});
+	}
+
+	public async Task<IEnumerable<HotelDto>> GetAvailableHotelsForDates(DateTime startDate, DateTime endDate, string? city)
+	{
+		if (startDate >= endDate)
+		{
+			throw new ArgumentException("Incorret dates range");
+		}
+
+		var hotels = await _hotelRepository.GetAllWithRoomsByDates(startDate, endDate, city);
+		//return hotels.Select(h => new HotelWithRoomsDto
+		//{
+		//	Id = h.Id,
+		//	Name = h.Name,
+		//	Address = h.Address,
+		//	Description = h.Description,
+		//	Rooms = [.. h.Rooms.Select(r => new Dtos.Room.RoomDto
+		//	{
+		//		Id = r.Id,
+		//		Capacity = r.Capacity,
+		//		HotelId = h.Id,
+		//		HotelName = h.Name,
+		//		PricePerNight = r.PricePerNight,
+		//	})],
+		//});
+		return hotels.Select(h => new HotelDto
+		{
+			Id = h.Id,
+			Name = h.Name,
+			Address = h.Address,
+			Description = h.Description,
+		});
+	}
+
+	public async Task<IEnumerable<HotelWithRoomsDto>> GetAvailableHotelsWithRoomsForDates(DateTime startDate, DateTime endDate, string? city)
 	{
 		if (startDate >= endDate)
 		{
@@ -94,6 +174,7 @@ public class HotelService
 			Rooms = [.. h.Rooms.Select(r => new Dtos.Room.RoomDto
 			{
 				Id = r.Id,
+				Description = r.Description,
 				Capacity = r.Capacity,
 				HotelId = h.Id,
 				HotelName = h.Name,

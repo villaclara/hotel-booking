@@ -1,50 +1,120 @@
 ﻿@page
-@using Microsoft.AspNetCore.Mvc.Razor
 @model HotelBooking.API.Pages.IndexModel
 @{
     ViewData["Title"] = "Home";
 }
 
-<div class="bg-white shadow-lg rounded-2xl p-8 max-w-3xl mx-auto mt-8">
-    <h1 class="text-2xl font-semibold text-gray-800 mb-6 text-center">
-        Find the Perfect Hotel
-    </h1>
-    <form method="get" asp-page="/Hotels/Index" class="grid gap-4 md:grid-cols-3">
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">City</label>
-            <input type="text" name="city"
-                   class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500" />
+<div class="bg-gray-900 text-gray-100 min-h-[80vh] flex flex-col items-center py-10 px-4">
+
+    <!-- SEARCH BOX -->
+    <div class="bg-gray-800 shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-4xl">
+        <h1 class="text-2xl font-semibold text-gray-100 mb-6 text-center">
+            Find the Perfect Hotel
+        </h1>
+
+        <form method="get" asp-page="/Hotels/Index"
+              class="grid gap-4 grid-cols-2 md:flex md:items-end md:justify-between md:gap-4">
+
+            <!-- MOBILE: Row 1 (Check-in, Check-out) | DESKTOP: inline -->
+            <div class="grid grid-cols-2 gap-4 col-span-2 md:flex md:gap-4 md:flex-1">
+                <div class="flex-1">
+                    <label class="block text-gray-300 font-medium mb-1">Check-in</label>
+                    <input type="date" name="checkin"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2
+                                  text-gray-100 placeholder-gray-400
+                                  focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+                <div class="flex-1">
+                    <label class="block text-gray-300 font-medium mb-1">Check-out</label>
+                    <input type="date" name="checkout"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2
+                                  text-gray-100 placeholder-gray-400
+                                  focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+            </div>
+
+            <!-- MOBILE: Row 2 (City, Search) | DESKTOP: inline -->
+            <div class="grid grid-cols-[1fr_auto] gap-4 col-span-2 md:flex md:gap-4 md:flex-1">
+                <div class="flex-1">
+                    <label class="block text-gray-300 font-medium mb-1">City</label>
+                    <input type="text" name="city"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2
+                                  text-gray-100 placeholder-gray-400
+                                  focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="Enter city..." />
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg flex items-center gap-2 h-[42px] mt-[22px] md:mt-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                        </svg>
+                        <span class="hidden sm:inline">Search</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- HOTEL CARDS -->
+    @if (Model.Hotels != null && Model.Hotels.Any())
+    {
+        <div class="mt-10 w-full">
+            <div class="flex flex-col md:flex-row md:flex-wrap md:justify-center gap-6">
+                @foreach (var hotel in Model.Hotels)
+                {
+                    <!-- CARD -->
+                    <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-md w-full md:w-[300px]
+                                overflow-hidden transform transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
+
+                        @{
+                            // Random color placeholder
+                            var colors = new[] { "bg-gradient-to-r from-blue-600 to-indigo-500",
+                                "bg-gradient-to-r from-purple-600 to-pink-500",
+                                "bg-gradient-to-r from-teal-500 to-emerald-500",
+                                "bg-gradient-to-r from-orange-500 to-amber-400",
+                                "bg-gradient-to-r from-sky-600 to-cyan-500" };
+                            var colorClass = colors[Random.Shared.Next(colors.Length)];
+                        }
+                        <div class="relative h-24 md:h-32 @colorClass">
+                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                                <h2 class="text-lg font-semibold text-white">@hotel.Name</h2>
+                            </div>
+                        </div>
+
+                        <!-- CARD CONTENT -->
+                        <div class="p-5">
+                            <p class="text-gray-400 text-sm mb-2">@hotel.Address</p>
+                            <p class="text-gray-300 text-sm line-clamp-3">@hotel.Description</p>
+                            <div class="mt-4 text-right">
+                                <a asp-page="/Hotels/Details" asp-route-id="@hotel.Id"
+                                   class="text-blue-500 hover:text-blue-400 font-medium text-sm">View Details →</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Check-in</label>
-            <input type="date" name="checkIn"
-                   class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500" />
-        </div>
-        <div>
-            <label class="block text-gray-700 font-medium mb-1">Check-out</label>
-            <input type="date" name="checkOut"
-                   class="w-full border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500" />
-        </div>
-        <div class="md:col-span-3 text-center">
-            <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg mt-4">
-                Search Hotels
-            </button>
-        </div>
-    </form>
+
+    }
+    else
+    {
+        <p class="text-gray-400 mt-10 text-center">No hotels found.</p>
+    }
+
 </div>
 
-@using Microsoft.AspNetCore.Razor.TagHelpers
-
-@{
-    var tagHelperActivator = HttpContext.RequestServices.GetService(typeof(ITagHelperActivator));
-}
-
-@if (tagHelperActivator == null)
-{
-    <p class="text-red-600 font-bold">❌ Tag Helpers are NOT active</p>
-}
-else
-{
-    <p class="text-green-600 font-bold">✅ Tag Helpers are active</p>
-}
+<style>
+    /* Autofill fix for dark theme */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important; /* bg-gray-700 */
+        -webkit-text-fill-color: #f9fafb !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+</style>

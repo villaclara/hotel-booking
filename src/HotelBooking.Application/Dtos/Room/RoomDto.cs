@@ -10,6 +10,9 @@ public class RoomDto
 	[Required]
 	public int HotelId { get; set; }
 
+	[Required(ErrorMessage = "Room Description is mandatory.")]
+	public string Description { get; set; } = default!;
+
 	public string HotelName { get; set; } = default!;
 
 	[Range(0, int.MaxValue)]

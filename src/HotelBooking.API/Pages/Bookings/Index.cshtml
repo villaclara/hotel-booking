@@ -1,0 +1,102 @@
+﻿@page
+@model HotelBooking.API.Pages.Bookings.IndexModel
+@{
+    ViewData["Title"] = "My Bookings";
+    var today = DateTime.Today;
+    var activeBookings = Model.Bookings?.Where(b => b.CheckOut >= today).ToList();
+    var archivedBookings = Model.Bookings?.Where(b => b.CheckOut < today).ToList();
+}
+
+<div class="bg-gray-900 px-4 flex flex-col items-center">
+    <div class="w-full max-w-4xl">
+        <h1 class="text-3xl font-semibold text-gray-100 text-center mb-8">
+            My Bookings
+        </h1>
+
+        @* Active Bookings *@
+        <h2 class="text-2xl font-semibold text-gray-100 mb-4">Active Bookings</h2>
+        @if (activeBookings != null && activeBookings.Any())
+        {
+            <div class="flex flex-col gap-6 mb-12">
+                @foreach (var booking in activeBookings)
+                {
+                    <div class="bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 pt-4 ps-4">
+                            <h2 class="text-xl font-semibold text-white">@booking.HotelName</h2>
+                            <p class="text-gray-200 text-sm mt-1">@booking.RoomDescription</p>
+
+                        <div class="p-4 sm:p-5">
+                            <div class="text-gray-300 text-sm sm:text-base space-y-1">
+                                <p><span class="font-medium text-gray-200">Check-in:</span> @booking.CheckIn.ToString("MMM dd, yyyy")</p>
+                                <p><span class="font-medium text-gray-200">Check-out:</span> @booking.CheckOut.ToString("MMM dd, yyyy")</p>
+                            </div>
+
+                            <div class="mt-4 flex justify-end">
+                                <form method="post" asp-page-handler="Cancel" asp-route-id="@booking.Id">
+                                    <button type="submit"
+                                            class="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200">
+                                        Cancel Booking
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-400 text-center text-lg mb-12">
+                You have no active bookings 😔
+            </p>
+        }
+
+        @* Archived Bookings *@
+        <h2 class="text-2xl font-semibold text-gray-100 mb-4">Archive</h2>
+        @if (archivedBookings != null && archivedBookings.Any())
+        {
+            <div class="flex flex-col gap-6 mb-12">
+                @foreach (var booking in archivedBookings)
+                {
+                    var colorClass = (booking.Id % 3) switch
+                    {
+                        0 => "from-gray-600 to-gray-800",
+                        1 => "from-gray-500 to-gray-700",
+                        _ => "from-gray-400 to-gray-600"
+                    };
+
+                    <div class="bg-gray-800 rounded-2xl overflow-hidden shadow-lg">
+                        <div class="bg-gradient-to-r @colorClass p-4 sm:p-5">
+                            <h2 class="text-xl font-semibold text-white">@booking.HotelName</h2>
+                            <p class="text-gray-200 text-sm mt-1">@booking.RoomDescription</p>
+                        </div>
+
+                        <div class="p-4 sm:p-5">
+                            <div class="text-gray-300 text-sm sm:text-base space-y-1">
+                                <p><span class="font-medium text-gray-200">Check-in:</span> @booking.CheckIn.ToString("MMM dd, yyyy")</p>
+                                <p><span class="font-medium text-gray-200">Check-out:</span> @booking.CheckOut.ToString("MMM dd, yyyy")</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-400 text-center text-lg">
+                You have no archived bookings.
+            </p>
+        }
+    </div>
+</div>
+
+<style>
+    /* Autofill fix for dark mode */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0px 1000px #374151 inset;
+        -webkit-text-fill-color: #f9fafb;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+</style>
