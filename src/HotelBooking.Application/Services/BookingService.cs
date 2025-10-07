@@ -49,7 +49,7 @@ public class BookingService
 		{
 			_logger.LogWarning("{@Method} - Room {@roomId} not available for {checkIn} - {checkOut}.",
 				nameof(CreateAsync), bookingDto.RoomId, bookingDto.CheckIn, bookingDto.CheckOut);
-			throw new ArgumentOutOfRangeException("Room is not available for selected dates.");
+			throw new ArgumentException("Room is not available for selected dates.");
 		}
 
 		var booking = new Booking

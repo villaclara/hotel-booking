@@ -1,9 +1,11 @@
 ﻿using HotelBooking.Application.Dtos.Room;
 using HotelBooking.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBooking.API.Controllers;
 
+[Authorize(Roles = "Admin")]
 [Route("api/[controller]")]
 [ApiController]
 public class RoomController : ControllerBase
@@ -15,6 +17,7 @@ public class RoomController : ControllerBase
 		_roomService = roomService;
 	}
 
+	[AllowAnonymous]
 	[HttpGet(Name = "GetAllRoomsInHotel")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetAllRoomsForHotel([FromQuery] int hotelId)
@@ -23,6 +26,7 @@ public class RoomController : ControllerBase
 		return Ok(rooms);
 	}
 
+	[AllowAnonymous]
 	[HttpGet("{id:int}", Name = "GetRoomById")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]

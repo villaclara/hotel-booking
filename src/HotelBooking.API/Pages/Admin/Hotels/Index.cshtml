@@ -1,0 +1,141 @@
+﻿@page
+@model HotelBooking.API.Pages.Admin.Hotels.IndexModel
+@{
+}
+
+<!-- Alpine.js -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<!-- hide x-cloak elements until Alpine boots -->
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
+
+<div class="min-h-screen bg-gray-900 px-4 py-10 flex flex-col items-center"
+     x-data="hotelModal()" x-cloak>
+    <div class="w-full max-w-5xl">
+        <h1 class="text-3xl font-semibold text-gray-100 text-center mb-8">
+            Admin - Hotels
+        </h1>
+
+        <!-- LIST -->
+        <template x-if="hotels && hotels.length">
+            <div class="flex flex-col gap-6">
+                <template x-for="hotel in hotels" :key="hotel.Id">
+                    <div class="bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-5 flex justify-between items-start gap-4">
+
+                        <!-- Hotel info -->
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-xl font-semibold text-gray-100 truncate" x-text="hotel.Name"></h2>
+                            <p class="text-gray-400 text-sm truncate" x-text="hotel.Address"></p>
+                            <p class="text-gray-300 text-sm mt-2 line-clamp-3" x-text="hotel.Description"></p>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex-shrink-0 flex flex-col sm:flex-row gap-2">
+                            <a :href="`/Admin/Hotels/${hotel.Id}`"
+                               class="bg-blue-400 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition text-center">
+                                View Rooms
+                            </a>
+
+                            <button type="button"
+                                    @@click ="open(hotel)"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <template x-if="!(hotels && hotels.length)">
+            <p class="text-gray-400 text-center text-lg mt-16">No hotels available 😔</p>
+        </template>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div x-show="openHotel" x-transition.opacity
+         class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+         style="display: none;">
+        <div x-on:click.away="close()"
+             class="bg-gray-800 rounded-2xl p-6 w-full max-w-lg relative">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-4">Edit Hotel</h2>
+
+            <!-- Server POST: form fields are bound with x-model so their values will post -->
+            <form method="post" class="space-y-4">
+                <!-- Hidden id -->
+                <input type="hidden" name="HotelId" x-model="openHotel.Id" />
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Name</label>
+                    <input type="text" name="Name" x-model="openHotel.Name" required
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Address</label>
+                    <input type="text" name="Address" x-model="openHotel.Address" required
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Description</label>
+                    <textarea name="Description" x-model="openHotel.Description" rows="4" required
+                              class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="submit" name="action" value="Save"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+                        Save
+                    </button>
+
+                    <button type="submit" name="action" value="Delete"
+                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium">
+                        Delete
+                    </button>
+
+                    <button type="button" x-on:click="close()"
+                            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function hotelModal() {
+        return {
+            // parse server-provided JSON safely; wrap JSON with single quotes so inner double-quotes are ok
+            hotels: (function(){
+                try {
+                    return JSON.parse('@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Hotels))') || [];
+                } catch (e) {
+                    console.error('Failed to parse hotels JSON', e);
+                    return [];
+                }
+            })(),
+
+            openHotel: null, // currently opened hotel object (deep clone)
+
+            // open modal for the passed hotel object (deep copy so editing doesn't mutate list until save)
+            open(hotel) {
+                this.openHotel = JSON.parse(JSON.stringify(hotel));
+                // ensure fields exist
+                this.openHotel.Name = this.openHotel.Name ?? '';
+                this.openHotel.Address = this.openHotel.Address ?? '';
+                this.openHotel.Description = this.openHotel.Description ?? '';
+            },
+
+            // close modal
+            close() {
+                this.openHotel = null;
+            }
+        };
+    }
+</script>

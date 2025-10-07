@@ -4,13 +4,12 @@ using HotelBooking.Infrastructure.Persistence;
 using HotelBooking.Infrastructure.Persistence.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddRazorPages();
-
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -33,8 +32,33 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 	.AddEntityFrameworkStores<AppDbContext>()
 	.AddDefaultTokenProviders();
 
-// TODO - idk if needed
-//builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddCookie();
+// Configuring the response for the API controllers to not return html login page.
+// However it would be better to use JWT in controllers, and Cookie in Razor Pages.
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.Events.OnRedirectToLogin = context =>
+	{
+		if (context.Request.Path.StartsWithSegments("/api"))
+		{
+			context.Response.StatusCode = 401;
+			return Task.CompletedTask;
+		}
+		context.Response.Redirect(context.RedirectUri);
+		return Task.CompletedTask;
+	};
+
+	options.Events.OnRedirectToAccessDenied = context =>
+	{
+		if (context.Request.Path.StartsWithSegments("/api"))
+		{
+			context.Response.StatusCode = 403;
+			return Task.CompletedTask;
+		}
+		context.Response.Redirect(context.RedirectUri);
+		return Task.CompletedTask;
+	};
+});
+
 
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
@@ -45,6 +69,41 @@ builder.Services.AddScoped<RoomService>();
 builder.Services.AddScoped<BookingService>();
 
 var app = builder.Build();
+
+// Creating Roles and Seeding Admin data.
+using (var scope = app.Services.CreateScope())
+{
+	// Creating Roles.
+	var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+	string[] roleNames = ["Admin", "User"];
+
+	foreach (var roleName in roleNames)
+	{
+		var roleExist = await roleManager.RoleExistsAsync(roleName);
+		if (!roleExist)
+		{
+			await roleManager.CreateAsync(new IdentityRole(roleName));
+		}
+	}
+
+	// Seeding with Admin account.
+	var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+	string adminEmail = "admin@test.com";
+	string adminPassword = "123123";
+
+	var adminUser = await userManager.FindByEmailAsync(adminEmail);
+	if (adminUser == null)
+	{
+		adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+		var result = await userManager.CreateAsync(adminUser, adminPassword);
+		if (result.Succeeded)
+		{
+			await userManager.AddToRoleAsync(adminUser, "Admin");
+		}
+	}
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

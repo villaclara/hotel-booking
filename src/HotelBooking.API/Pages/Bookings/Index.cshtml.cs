@@ -1,10 +1,12 @@
 using HotelBooking.Application.Dtos.Booking;
 using HotelBooking.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace HotelBooking.API.Pages.Bookings;
 
+[Authorize(Roles = "User")]
 public class IndexModel : PageModel
 {
 	private readonly BookingService _bookingService;

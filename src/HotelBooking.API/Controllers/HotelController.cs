@@ -1,9 +1,11 @@
 ﻿using HotelBooking.Application.Dtos.Hotel;
 using HotelBooking.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBooking.API.Controllers;
 
+[Authorize(Roles = "Admin")]
 [Route("api/[controller]")]
 [ApiController]
 public class HotelController : ControllerBase
@@ -15,6 +17,7 @@ public class HotelController : ControllerBase
 		_hotelService = hotelService;
 	}
 
+	[AllowAnonymous]
 	[HttpGet(Name = "GetAllHotels")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	public async Task<IActionResult> GetAllHotels()
@@ -24,6 +27,7 @@ public class HotelController : ControllerBase
 		return Ok(hotels);
 	}
 
+	[AllowAnonymous]
 	[HttpGet("{id:int}", Name = "GetHotelById")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -44,12 +48,16 @@ public class HotelController : ControllerBase
 		return Ok(hotel);
 	}
 
+	[AllowAnonymous]
 	[HttpGet("free")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> SearchAvailableHotelsForDates([FromQuery] DateTime checkIn, [FromQuery] DateTime checkOut, [FromQuery] string? city = null)
 	{
 		if (checkIn == default || checkOut == default)
 		{
-			return BadRequest(new { error = "Invalid date range." });
+			return BadRequest("Invalid date range.");
 		}
 
 		city = city?.Trim().ToLower();
@@ -57,7 +65,9 @@ public class HotelController : ControllerBase
 		var hotels = await _hotelService.GetAvailableHotelsForDates(checkIn, checkOut, city);
 
 		if (!hotels.Any())
-			return NotFound(new { message = "No hotels or rooms available in the selected date range." });
+		{
+			return NotFound("No hotels or rooms available in the selected date range.");
+		}
 
 		return Ok(hotels);
 	}

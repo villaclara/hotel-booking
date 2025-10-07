@@ -1,0 +1,154 @@
+﻿@page "/Admin/Hotels/{hotelId:int}"
+@model HotelBooking.API.Pages.Admin.Hotels.RoomsModel
+@{
+    ViewData["Title"] = $"Admin - Rooms for {Model.HotelName}";
+}
+
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
+
+<div class="min-h-screen bg-gray-900 px-4 py-10 flex flex-col items-center"
+     x-data="roomsPage()" x-cloak>
+    <div class="w-full max-w-5xl">
+        <h1 class="text-3xl font-semibold text-gray-100 text-center mb-8">
+            Rooms — <span class="text-blue-400">@Model.HotelName</span>
+        </h1>
+
+        <div class="flex justify-end mb-6">
+            <button type="button"
+                    x-on:click ="openRoom = { Id: 0, HotelId: @Model.HotelId, HotelName: '@Model.HotelName', Description: '', Capacity: 1, PricePerNight: 0 }"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                + Add Room
+            </button>
+        </div>
+
+        <!-- ROOM LIST -->
+        <template x-if="rooms.length > 0">
+            <div class="space-y-4">
+                <template x-for="room in rooms" :key="room.Id">
+                    <div class="bg-gray-800 rounded-2xl shadow-lg p-4 sm:p-5 flex justify-between items-start gap-4">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-lg font-semibold text-gray-100 truncate">Room #<span x-text="room.Id"></span></h3>
+                            <p class="text-gray-300 text-sm mt-1" x-text="room.Description"></p>
+                            <p class="text-gray-400 text-sm mt-1">
+                                Capacity: <span x-text="room.Capacity"></span> •
+                                Price: <span x-text="room.PricePerNight.toFixed(2)"></span> $
+                            </p>
+                        </div>
+
+                        <div class="flex-shrink-0">
+                            <button type="button"
+                                    x-on:click="edit(room)"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <template x-if="rooms.length === 0">
+            <p class="text-gray-400 text-center text-lg mt-16">No rooms found 😔</p>
+        </template>
+    </div>
+
+    <!-- MODAL -->
+    <div x-show="openRoom" x-transition.opacity
+         class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+         style="display:none;">
+        <div x-on:click.away="close()"
+             class="bg-gray-800 rounded-2xl p-6 w-full max-w-lg relative">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-4">
+                <span x-text="openRoom.Id ? 'Edit Room' : 'Add Room'"></span>
+            </h2>
+
+            <form method="post" class="space-y-4">
+                <input type="hidden" name="HotelId" :value="openRoom.HotelId" />
+                <input type="hidden" name="Id" :value="openRoom.Id" />
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Hotel</label>
+                    <input type="text" name="HotelName" :value="openRoom.HotelName" readonly
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-400" />
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 font-medium mb-1">Description</label>
+                    <textarea name="Description" x-model="openRoom.Description" rows="3" required
+                              class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1">Capacity</label>
+                        <input type="number" name="Capacity" x-model="openRoom.Capacity" min="1" required
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1">Price / Night ($)</label>
+                        <input type="number" step="0.01" name="PricePerNight" x-model="openRoom.PricePerNight" min="1" required
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <template x-if="openRoom.Id">
+                    <button type="submit" name="action" value="Save"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+                        Save
+                    </button>
+                    </template>
+
+                    <template x-if="!openRoom.Id">
+                        <button type="submit" name="action" value="Add"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+                            + Add
+                        </button>
+                    </template>
+
+                    <template x-if="openRoom.Id">
+                        <button type="submit" name="action" value="Delete"
+                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium">
+                            Delete
+                        </button>
+                    </template>
+
+                    <button type="button" x-on:click ="close()"
+                            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function roomsPage() {
+        return {
+            rooms: (function(){
+                try {
+                    return JSON.parse('@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Rooms))');
+                } catch (e) {
+                    console.error("Failed to parse rooms JSON", e);
+                    return [];
+                }
+            })(),
+            openRoom: null,
+
+            edit(room) {
+                this.openRoom = JSON.parse(JSON.stringify(room));
+            },
+
+            close() {
+                this.openRoom = null;
+            }
+        }
+    }
+</script>

@@ -49,15 +49,20 @@ public class RoomService
 
 		_logger.LogInformation("{@Method} - Created room ({@id}) for hotel {@hotelId}.", nameof(CreateAsync), created.Id, created.HotelId);
 
-		// TODO - not sure if it will work because i do not pass the HotelName before.
+		var room1 = await _roomRepository.GetByIdAsync(created.Id);
+		if (room1 == null)
+		{
+			throw new KeyNotFoundException("{@Method} - Created room was not found in database.");
+		}
+
 		return new RoomDto
 		{
-			Id = created.Id,
-			Description = created.Description,
-			HotelId = created.HotelId,
-			HotelName = created.Hotel.Name,
-			PricePerNight = created.PricePerNight,
-			Capacity = created.Capacity
+			Id = room1.Id,
+			Description = room1.Description,
+			HotelId = room1.HotelId,
+			HotelName = room1.Hotel.Name,
+			PricePerNight = room1.PricePerNight,
+			Capacity = room1.Capacity
 		};
 	}
 
@@ -113,6 +118,7 @@ public class RoomService
 		{
 			existing.PricePerNight = roomDto.PricePerNight;
 			existing.Capacity = roomDto.Capacity;
+			existing.Description = roomDto.Description;
 
 			var updated = await _roomRepository.UpdateAsync(existing);
 

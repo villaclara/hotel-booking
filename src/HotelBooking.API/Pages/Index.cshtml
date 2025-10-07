@@ -1,120 +1,282 @@
 ﻿@page
 @model HotelBooking.API.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Hotels";
 }
 
-<div class="bg-gray-900 text-gray-100 min-h-[80vh] flex flex-col items-center py-10 px-4">
+<div class="max-w-4xl mx-auto px-4">
 
-    <!-- SEARCH BOX -->
-    <div class="bg-gray-800 shadow-xl rounded-2xl p-6 sm:p-8 w-full max-w-4xl">
-        <h1 class="text-2xl font-semibold text-gray-100 mb-6 text-center">
+    <!-- MOBILE COLLAPSIBLE WRAPPER -->
+    <div class="md:hidden">
+        <input type="checkbox" id="toggleFindHotel" class="hidden" />
+        <label for="toggleFindHotel" class="text-gray-100 font-semibold cursor-pointer flex justify-between items-center mb-2">
             Find the Perfect Hotel
-        </h1>
+            <span class="text-gray-400">▼</span>
+        </label>
+        <p class="text-gray-300 text-sm mb-4">Click above to expand the search form.</p>
 
+        <div class="hidden" id="mobileForm">
+            <form method="get" asp-page="/Hotels/Index"
+                  class="grid gap-4 grid-cols-2">
+                <!-- check-in / check-out -->
+                <div class="grid grid-cols-2 gap-4 col-span-2">
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1">Check-in</label>
+                        <input type="date" asp-for="CheckIn"
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400" />
+                    </div>
+                    <div>
+                        <label class="block text-gray-300 font-medium mb-1">Check-out</label>
+                        <input type="date" asp-for="CheckOut"
+                               class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400" />
+                    </div>
+                </div>
+                <!-- city + search button -->
+                <div class="grid grid-cols-[1fr_auto] gap-4 col-span-2 mt-2">
+                    <input type="text" asp-for="City"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400"
+                           placeholder="Enter city..." />
+                    <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- DESKTOP FORM -->
+    <div class="hidden md:block bg-gray-800 shadow-xl rounded-2xl sm:px-6 sm:py-4 w-full">
         <form method="get" asp-page="/Hotels/Index"
-              class="grid gap-4 grid-cols-2 md:flex md:items-end md:justify-between md:gap-4">
+              class="flex items-end justify-between gap-4">
 
-            <!-- MOBILE: Row 1 (Check-in, Check-out) | DESKTOP: inline -->
-            <div class="grid grid-cols-2 gap-4 col-span-2 md:flex md:gap-4 md:flex-1">
+            <div class="flex gap-4 flex-1">
                 <div class="flex-1">
                     <label class="block text-gray-300 font-medium mb-1">Check-in</label>
-                    <input type="date" name="checkin"
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2
-                                  text-gray-100 placeholder-gray-400
-                                  focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="date" asp-for="CheckIn"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400" />
                 </div>
                 <div class="flex-1">
                     <label class="block text-gray-300 font-medium mb-1">Check-out</label>
-                    <input type="date" name="checkout"
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2
-                                  text-gray-100 placeholder-gray-400
-                                  focus:ring-blue-500 focus:border-blue-500" />
+                    <input type="date" asp-for="CheckOut"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400" />
                 </div>
-            </div>
-
-            <!-- MOBILE: Row 2 (City, Search) | DESKTOP: inline -->
-            <div class="grid grid-cols-[1fr_auto] gap-4 col-span-2 md:flex md:gap-4 md:flex-1">
                 <div class="flex-1">
                     <label class="block text-gray-300 font-medium mb-1">City</label>
-                    <input type="text" name="city"
-                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2
-                                  text-gray-100 placeholder-gray-400
-                                  focus:ring-blue-500 focus:border-blue-500"
+                    <input type="text" asp-for="City"
+                           class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 text-gray-100 placeholder-gray-400"
                            placeholder="Enter city..." />
                 </div>
-
-                <div class="flex items-end">
-                    <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg flex items-center gap-2 h-[42px] mt-[22px] md:mt-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                             stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
-                        </svg>
-                        <span class="hidden sm:inline">Search</span>
-                    </button>
-                </div>
             </div>
+
+            <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg flex items-center gap-2 h-[42px]">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                </svg>
+                Search
+            </button>
         </form>
     </div>
-
-    <!-- HOTEL CARDS -->
-    @if (Model.Hotels != null && Model.Hotels.Any())
-    {
-        <div class="mt-10 w-full">
-            <div class="flex flex-col md:flex-row md:flex-wrap md:justify-center gap-6">
-                @foreach (var hotel in Model.Hotels)
-                {
-                    <!-- CARD -->
-                    <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-md w-full md:w-[300px]
-                                overflow-hidden transform transition-all duration-200 hover:-translate-y-1 hover:shadow-xl">
-
-                        @{
-                            // Random color placeholder
-                            var colors = new[] { "bg-gradient-to-r from-blue-600 to-indigo-500",
-                                "bg-gradient-to-r from-purple-600 to-pink-500",
-                                "bg-gradient-to-r from-teal-500 to-emerald-500",
-                                "bg-gradient-to-r from-orange-500 to-amber-400",
-                                "bg-gradient-to-r from-sky-600 to-cyan-500" };
-                            var colorClass = colors[Random.Shared.Next(colors.Length)];
-                        }
-                        <div class="relative h-24 md:h-32 @colorClass">
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                                <h2 class="text-lg font-semibold text-white">@hotel.Name</h2>
-                            </div>
-                        </div>
-
-                        <!-- CARD CONTENT -->
-                        <div class="p-5">
-                            <p class="text-gray-400 text-sm mb-2">@hotel.Address</p>
-                            <p class="text-gray-300 text-sm line-clamp-3">@hotel.Description</p>
-                            <div class="mt-4 text-right">
-                                <a asp-page="/Hotels/Details" asp-route-id="@hotel.Id"
-                                   class="text-blue-500 hover:text-blue-400 font-medium text-sm">View Details →</a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-
-    }
-    else
-    {
-        <p class="text-gray-400 mt-10 text-center">No hotels found.</p>
-    }
 
 </div>
 
 <style>
-    /* Autofill fix for dark theme */
+    /* mobile checkbox toggle */
+    #toggleFindHotel:checked ~ #mobileForm {
+        display: block;
+    }
+</style>
+
+
+
+@* <div class="max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-semibold text-gray-100 text-center mb-8">
+        Available Hotels
+    </h1>
+
+    <!-- Hotel list -->
+    @if (Model.Hotels != null && Model.Hotels.Any())
+    {
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach (var hotel in Model.Hotels)
+            {
+                // Placeholder gradient for image
+                var colorClass = (hotel.Id % 3) switch
+                {
+                    0 => "bg-gradient-to-br from-blue-600 to-blue-800",
+                    1 => "bg-gradient-to-br from-purple-600 to-indigo-800",
+                    _ => "bg-gradient-to-br from-teal-600 to-emerald-700"
+                };
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+
+                    <!-- Image / placeholder block -->
+                    <div class="relative h-40 @colorClass flex items-end justify-start p-4">
+                        <h2 class="text-xl font-semibold text-white bg-black/40 px-3 py-1 rounded-lg">
+                            @hotel.Name
+                        </h2>
+                    </div>
+
+                    <!-- Address and Description -->
+                    <div class="p-4">
+                        <p class="text-gray-400 text-sm mb-2">@hotel.Address</p>
+                        <p class="text-gray-300 text-sm line-clamp-3">@hotel.Description</p>
+                        <div class="mt-4 text-right">
+                            <a asp-page="/Hotels/Details" asp-route-id="@hotel.Id"
+                               class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200">
+                                View Rooms
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-400 text-center text-lg mt-16">No available hotels 😔</p>
+    }
+</div> *@
+
+@* Razor Page *@
+<script src="//unpkg.com/alpinejs" defer></script>
+
+
+
+
+<div class="max-w-7xl mx-auto px-4 py-8" x-data="hotelModal()">
+    <h1 class="text-3xl font-semibold text-gray-100 text-center mb-8">
+        Available Hotels
+    </h1>
+
+    <!-- Hotel list -->
+    @if (Model.Hotels != null && Model.Hotels.Any())
+    {
+        var colors = new[] { 
+            "bg-gradient-to-r from-blue-600 to-indigo-500",
+            "bg-gradient-to-r from-purple-600 to-pink-500",
+            "bg-gradient-to-r from-orange-500 to-amber-400",
+            "bg-gradient-to-r from-sky-600 to-cyan-500" };
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            @foreach (var hotel in Model.Hotels)
+            {
+                var colorClass = colors[Random.Shared.Next(colors.Length)];
+
+                <div class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                    <!-- Image / placeholder block -->
+                    <div class="relative h-24 md:h-32 @colorClass flex items-end justify-start p-4">
+                        <h2 class="text-xl font-semibold text-white bg-black/40 px-3 py-1 rounded-lg">
+                            @hotel.Name
+                        </h2>
+                    </div>
+
+                    <!-- Address and Description -->
+                    <div class="p-4">
+                        <p class="text-gray-400 text-sm mb-2">@hotel.Address</p>
+                        <p class="text-gray-300 text-sm line-clamp-3">@hotel.Description</p>
+                        <div class="mt-4 text-right">
+                            <button x-on:click.stop="openHotel($el.dataset.id)" data-id="@hotel.Id"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-200">
+                                View Rooms
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-400 text-center text-lg mt-16">No available hotels 😔</p>
+    }
+
+    <!-- Modal -->
+
+    <div x-show="selectedHotel" x-ref="hotelModal" x-transition class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div x-on:click.away="closeHotel()" class="bg-gray-900 rounded-lg p-6 w-11/12 max-w-2xl shadow-lg overflow-auto max-h-[90vh]">
+            <h2 class="text-2xl font-bold text-white mb-2" x-text="selectedHotel?.name"></h2>
+
+            <template x-for="room in selectedHotel?.rooms" :key="room.id">
+                <div class="bg-gray-800 p-3 rounded mb-2 flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-200" x-text="room.description"></p>
+                        <p class="text-gray-400 text-sm">
+                            Capacity: <span x-text="room.capacity"></span> |
+                            Price per night: $<span x-text="room.pricePerNight"></span>
+                        </p>
+                    </div>
+
+                    <!-- Book button -->
+                    <form method="get" action="/Bookings/Create" class="ml-4">
+                        <input type="hidden" name="RoomId" :value="room.id" />
+                        <input type="hidden" name="CheckIn" value="@Model.CheckIn.ToString("yyyy-MM-dd")" />
+                        <input type="hidden" name="CheckOut" value="@Model.CheckOut.ToString("yyyy-MM-dd")" />
+                        <button type="submit"
+                                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+                            Book
+                        </button>
+                    </form>
+                </div>
+            </template>
+
+
+            <div class="text-right mt-4">
+                <button x-on:click="closeHotel()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function hotelModal() {
+        return {
+            hotels: @Html.Raw(Json.Serialize(Model.Hotels)),
+            selectedHotel: null,
+            openHotel(id) {
+                id = Number(id); // convert string to number
+                const hotel = this.hotels.find(h => h.id === id);
+                if (hotel) {
+                    hotel.RoomsDto = hotel.RoomsDto || [];
+                    this.selectedHotel = hotel;
+                    this.$refs.hotelModal.classList.remove('hidden');
+                } else {
+                    console.warn('Hotel not found', id);
+                }
+            },
+            closeHotel() {
+                    this.selectedHotel = null;
+            }
+        }
+    }
+</script>
+
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
+
+
+
+<style>
+    /* Autofill color fix for dark theme */
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0px 1000px #374151 inset !important; /* bg-gray-700 */
-        -webkit-text-fill-color: #f9fafb !important;
+        -webkit-box-shadow: 0 0 0px 1000px #1f2937 inset;
+        -webkit-text-fill-color: #f9fafb;
         transition: background-color 5000s ease-in-out 0s;
     }
 </style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

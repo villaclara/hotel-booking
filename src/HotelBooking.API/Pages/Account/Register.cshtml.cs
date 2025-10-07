@@ -57,6 +57,11 @@ public class RegisterModel : PageModel
 
 			if (result.Succeeded)
 			{
+				if (!await userManager.IsInRoleAsync(user, "User"))
+				{
+					await userManager.AddToRoleAsync(user, "User");
+				}
+
 				await signInManager.SignInAsync(user, isPersistent: false);
 				return LocalRedirect(returnUrl);
 			}

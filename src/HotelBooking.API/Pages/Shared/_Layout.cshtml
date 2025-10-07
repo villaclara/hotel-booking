@@ -27,10 +27,13 @@
 
                     <!-- Desktop nav links (hidden on mobile) -->
                     <div class="hidden sm:flex sm:items-center sm:space-x-6">
-                        <a asp-page="/Hotels/Index" class="text-gray-200 hover:text-blue-400 font-medium">Hotels</a>
-                        @if (isLoggedIn)
+                        @if (isLoggedIn && User.IsInRole("User"))
                         {
                             <a asp-page="/Bookings/Index" class="text-gray-200 hover:text-blue-400 font-medium">My Bookings</a>
+                        }
+                        @if (isLoggedIn && User.IsInRole("Admin"))
+                        {
+                            <a asp-page="/Admin/Hotels/Index" class="text-gray-200 hover:text-blue-400 font-medium">Manage</a>
                         }
                     </div>
                 </div>

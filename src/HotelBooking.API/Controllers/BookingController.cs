@@ -1,9 +1,11 @@
 ﻿using HotelBooking.Application.Dtos.Booking;
 using HotelBooking.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBooking.API.Controllers;
 
+[Authorize(Roles = "User")]
 [Route("api/[controller]")]
 [ApiController]
 public class BookingController : ControllerBase
@@ -56,5 +58,23 @@ public class BookingController : ControllerBase
 		}
 
 		return Ok(result);
+	}
+
+	[HttpDelete("{id:int}")]
+	public async Task<IActionResult> DeleteBooking(int id)
+	{
+		try
+		{
+			var result = await _bookingService.DeleteAsync(id);
+			return result ? NoContent() : Problem(detail: "Deleting failed.", statusCode: StatusCodes.Status500InternalServerError);
+		}
+		catch (ArgumentOutOfRangeException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+		catch (Exception)
+		{
+			return Problem(detail: "An error occurred while processing your request.", statusCode: StatusCodes.Status500InternalServerError);
+		}
 	}
 }
