@@ -87,29 +87,14 @@ var app = builder.Build();
 // Creating Roles and Seeding Admin data.
 using (var scope = app.Services.CreateScope())
 {
-	// Creating Roles.
-	var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-	string[] roleNames = ["Admin", "User"];
-
-	foreach (var roleName in roleNames)
-	{
-		var roleExist = await roleManager.RoleExistsAsync(roleName);
-		if (!roleExist)
-		{
-			await roleManager.CreateAsync(new IdentityRole(roleName));
-		}
-	}
-
 	var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 	var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+	var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-	// Delete and recretate table with Seed data.
-	if (scope.ServiceProvider.GetRequiredService<IHostEnvironment>().IsDevelopment())
-	{
-		await context.Database.EnsureDeletedAsync();
-		await context.Database.EnsureCreatedAsync();
-	}
+
+	await context.Database.EnsureDeletedAsync();
+	//await context.Database.EnsureCreatedAsync();
+	await context.Database.MigrateAsync();
 
 	await Seed.SeedAsync(context, userManager, roleManager);
 }
