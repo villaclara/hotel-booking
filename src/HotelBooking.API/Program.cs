@@ -101,22 +101,17 @@ using (var scope = app.Services.CreateScope())
 		}
 	}
 
-	// Seeding with Admin account.
+	var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 	var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-	string adminEmail = "admin@test.com";
-	string adminPassword = "123123";
-
-	var adminUser = await userManager.FindByEmailAsync(adminEmail);
-	if (adminUser == null)
+	// Delete and recretate table with Seed data.
+	if (scope.ServiceProvider.GetRequiredService<IHostEnvironment>().IsDevelopment())
 	{
-		adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
-		var result = await userManager.CreateAsync(adminUser, adminPassword);
-		if (result.Succeeded)
-		{
-			await userManager.AddToRoleAsync(adminUser, "Admin");
-		}
+		await context.Database.EnsureDeletedAsync();
+		await context.Database.EnsureCreatedAsync();
 	}
+
+	await Seed.SeedAsync(context, userManager, roleManager);
 }
 
 // Configure the HTTP request pipeline.

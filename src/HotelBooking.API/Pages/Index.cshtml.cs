@@ -16,7 +16,7 @@ public class IndexModel : PageModel
 	public DateTime CheckOut { get; set; }
 
 	[BindProperty(SupportsGet = true)]
-	public string City { get; set; }
+	public string? City { get; set; }
 	public IEnumerable<HotelWithRoomsDto> Hotels { get; set; } = [];
 
 	public IndexModel(HotelService hotelService)
