@@ -9,14 +9,6 @@ public class IndexModel : PageModel
 {
 	private readonly HotelService _hotelService;
 
-	public IndexModel(HotelService hotelService)
-	{
-		_hotelService = hotelService;
-	}
-
-	//public IEnumerable<HotelDto> Hotels { get; set; } = [];
-	public IEnumerable<HotelWithRoomsDto> Hotels { get; set; } = [];
-
 	[BindProperty(SupportsGet = true)]
 	public DateTime CheckIn { get; set; }
 
@@ -25,6 +17,12 @@ public class IndexModel : PageModel
 
 	[BindProperty(SupportsGet = true)]
 	public string City { get; set; }
+	public IEnumerable<HotelWithRoomsDto> Hotels { get; set; } = [];
+
+	public IndexModel(HotelService hotelService)
+	{
+		_hotelService = hotelService;
+	}
 
 	public async Task<IActionResult> OnGet(DateTime? checkin, DateTime? checkout, string? city)
 	{
@@ -34,16 +32,9 @@ public class IndexModel : PageModel
 			return Page();
 		}
 
+		// Default values if not passed.
 		CheckIn = checkin ?? DateTime.Now;
 		CheckOut = checkout ?? DateTime.Now.AddDays(1);
-		//if (checkin.HasValue && checkout.HasValue)
-		//{
-		//	Hotels = await _hotelService.GetAvailableHotelsForDates(checkin.Value, checkout.Value, city);
-		//}
-		//else
-		//{
-		//	Hotels = await _hotelService.GetAllAsync();
-		//}
 
 		if (checkin.HasValue && checkout.HasValue)
 		{

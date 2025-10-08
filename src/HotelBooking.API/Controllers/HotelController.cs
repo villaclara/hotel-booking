@@ -62,7 +62,7 @@ public class HotelController : ControllerBase
 
 		city = city?.Trim().ToLower();
 
-		var hotels = await _hotelService.GetAvailableHotelsForDates(checkIn, checkOut, city);
+		var hotels = await _hotelService.GetAvailableHotelsWithRoomsForDates(checkIn, checkOut, city);
 
 		if (!hotels.Any())
 		{

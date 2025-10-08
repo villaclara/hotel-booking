@@ -12,18 +12,18 @@ public class RoomsModel : PageModel
 	private readonly RoomService _roomService;
 	private readonly HotelService _hotelService;
 
-	public RoomsModel(RoomService roomService, HotelService hotelService)
-	{
-		_roomService = roomService;
-		_hotelService = hotelService;
-	}
-
 	[BindProperty(SupportsGet = true)]
 	public int HotelId { get; set; }
 
 	public string HotelName { get; set; } = string.Empty;
 
 	public List<RoomDto> Rooms { get; set; } = new();
+
+	public RoomsModel(RoomService roomService, HotelService hotelService)
+	{
+		_roomService = roomService;
+		_hotelService = hotelService;
+	}
 
 	public async Task OnGetAsync()
 	{

@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace HotelBooking.Application.Services;
 
+/// <summary>
+/// Provides CRUD operations related to Hotels.
+/// </summary>
 public class HotelService
 {
 	private readonly IHotelRepository _hotelRepository;
@@ -17,6 +20,12 @@ public class HotelService
 		_logger = logger;
 	}
 
+	/// <summary>
+	/// Creates a new hotel asynchronously.
+	/// </summary>
+	/// <param name="hotelDto">The hotel data to create.</param>
+	/// <returns>The created <see cref="HotelDto"/>.</returns>
+	/// <exception cref="InvalidOperationException">If creation fails.</exception>
 	public async Task<HotelDto> CreateAsync(HotelDto hotelDto)
 	{
 		ArgumentNullException.ThrowIfNullOrEmpty(hotelDto.Name);
@@ -49,6 +58,11 @@ public class HotelService
 		};
 	}
 
+	/// <summary>
+	/// Retrieves a hotel by its ID asynchronously.
+	/// </summary>
+	/// <param name="id">The hotel ID.</param>
+	/// <returns>The <see cref="HotelDto"/> if found; otherwise, <c>null</c>.</returns>
 	public async Task<HotelDto?> GetHotelByIdAsync(int id)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(id, 1);
@@ -66,32 +80,11 @@ public class HotelService
 			: null;
 	}
 
-	public async Task<HotelWithRoomsDto?> GetHotelWithRoomsById(int id)
-	{
-		ArgumentOutOfRangeException.ThrowIfLessThan(id, 1);
 
-		var hotel = await _hotelRepository.GetByIdAsync(id);
-
-		return hotel != null
-			? new HotelWithRoomsDto
-			{
-				Id = hotel.Id,
-				Name = hotel.Name,
-				Address = hotel.Address,
-				Description = hotel.Description,
-				Rooms = [.. hotel.Rooms.Select(r => new Dtos.Room.RoomDto
-			{
-				Id = r.Id,
-				Description = r.Description,
-				Capacity = r.Capacity,
-				HotelId = hotel.Id,
-				HotelName = hotel.Name,
-				PricePerNight = r.PricePerNight,
-			})],
-			}
-			: null;
-	}
-
+	/// <summary>
+	/// Retrieves all hotels asynchronously.
+	/// </summary>
+	/// <returns>A collection of <see cref="HotelDto"/>.</returns>
 	public async Task<IEnumerable<HotelDto>> GetAllAsync()
 	{
 		var hotels = await _hotelRepository.GetAllAsync();
@@ -104,6 +97,10 @@ public class HotelService
 		});
 	}
 
+	/// <summary>
+	/// Retrieves all hotels with their rooms asynchronously.
+	/// </summary>
+	/// <returns>A collection of <see cref="HotelWithRoomsDto"/>.</returns>
 	public async Task<IEnumerable<HotelWithRoomsDto>> GetAllWithRoomsAsync()
 	{
 		var hotels = await _hotelRepository.GetAllAsync();
@@ -125,38 +122,14 @@ public class HotelService
 		});
 	}
 
-	public async Task<IEnumerable<HotelDto>> GetAvailableHotelsForDates(DateTime startDate, DateTime endDate, string? city)
-	{
-		if (startDate >= endDate)
-		{
-			throw new ArgumentException("Incorret dates range");
-		}
-
-		var hotels = await _hotelRepository.GetAllWithRoomsByDates(startDate, endDate, city);
-		//return hotels.Select(h => new HotelWithRoomsDto
-		//{
-		//	Id = h.Id,
-		//	Name = h.Name,
-		//	Address = h.Address,
-		//	Description = h.Description,
-		//	Rooms = [.. h.Rooms.Select(r => new Dtos.Room.RoomDto
-		//	{
-		//		Id = r.Id,
-		//		Capacity = r.Capacity,
-		//		HotelId = h.Id,
-		//		HotelName = h.Name,
-		//		PricePerNight = r.PricePerNight,
-		//	})],
-		//});
-		return hotels.Select(h => new HotelDto
-		{
-			Id = h.Id,
-			Name = h.Name,
-			Address = h.Address,
-			Description = h.Description,
-		});
-	}
-
+	/// <summary>
+	/// Retrieves available hotels with rooms for a specific date range and optional city asynchronously.
+	/// </summary>
+	/// <param name="startDate">The start date.</param>
+	/// <param name="endDate">The end date.</param>
+	/// <param name="city">Optional city filter.</param>
+	/// <returns>A collection of <see cref="HotelWithRoomsDto"/>.</returns>
+	/// <exception cref="ArgumentException">If date range is invalid.</exception>
 	public async Task<IEnumerable<HotelWithRoomsDto>> GetAvailableHotelsWithRoomsForDates(DateTime startDate, DateTime endDate, string? city)
 	{
 		if (startDate >= endDate)
@@ -183,6 +156,13 @@ public class HotelService
 		});
 	}
 
+	/// <summary>
+	/// Updates an existing hotel asynchronously.
+	/// </summary>
+	/// <param name="hotelDto">The updated hotel data.</param>
+	/// <returns>The updated <see cref="HotelDto"/>.</returns>
+	/// <exception cref="KeyNotFoundException">If the hotel does not exist.</exception>
+	/// <exception cref="InvalidOperationException">If update fails.</exception>
 	public async Task<HotelDto> UpdateAsync(HotelDto hotelDto)
 	{
 		ArgumentNullException.ThrowIfNullOrEmpty(hotelDto.Name);
@@ -218,6 +198,12 @@ public class HotelService
 		}
 	}
 
+	/// <summary>
+	/// Deletes a hotel by its ID asynchronously.
+	/// </summary>
+	/// <param name="id">The hotel ID.</param>
+	/// <returns><c>true</c> if deletion succeeds; otherwise, <c>false</c>.</returns>
+	/// <exception cref="InvalidOperationException">If deletion fails.</exception>
 	public async Task<bool> DeleteAsync(int id)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(id, 1);

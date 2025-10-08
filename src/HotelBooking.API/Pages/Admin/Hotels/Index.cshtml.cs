@@ -11,19 +11,28 @@ public class IndexModel : PageModel
 {
 	private readonly HotelService _hotelService;
 
+	[BindProperty]
+	public List<HotelWithRoomsDto> Hotels { get; set; }
+
+	[BindProperty]
+	public int HotelId { get; set; }
+
+	[BindProperty]
+	public string Name { get; set; } = string.Empty;
+
+	[BindProperty]
+	public string Address { get; set; } = string.Empty;
+
+	[BindProperty]
+	public string Description { get; set; } = string.Empty;
+
+	[BindProperty]
+	public string Action { get; set; } = string.Empty;
+
 	public IndexModel(HotelService hotelService)
 	{
 		_hotelService = hotelService;
 	}
-
-	[BindProperty]
-	public List<HotelWithRoomsDto> Hotels { get; set; }
-
-	[BindProperty] public int HotelId { get; set; }
-	[BindProperty] public string Name { get; set; } = string.Empty;
-	[BindProperty] public string Address { get; set; } = string.Empty;
-	[BindProperty] public string Description { get; set; } = string.Empty;
-	[BindProperty] public string Action { get; set; } = string.Empty;
 
 	public async Task OnGet()
 	{
@@ -38,7 +47,7 @@ public class IndexModel : PageModel
 			await _hotelService.DeleteAsync(HotelId);
 		}
 
-		if (Action == "Save")
+		else if (Action == "Save")
 		{
 			var hotel = new HotelDto
 			{
@@ -49,6 +58,19 @@ public class IndexModel : PageModel
 			};
 
 			await _hotelService.UpdateAsync(hotel);
+		}
+
+		else if (Action == "Add")
+		{
+			var hotel = new HotelDto
+			{
+				Id = HotelId,
+				Name = Name,
+				Address = Address,
+				Description = Description,
+			};
+
+			await _hotelService.CreateAsync(hotel);
 		}
 
 		return RedirectToPage();

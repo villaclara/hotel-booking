@@ -14,13 +14,6 @@ public class CreateModel : PageModel
 	private readonly RoomService _roomService;
 	private readonly BookingService _bookingService;
 
-	public CreateModel(UserManager<IdentityUser> userManager, RoomService roomService, BookingService bookingService)
-	{
-		_userManager = userManager;
-		_roomService = roomService;
-		_bookingService = bookingService;
-	}
-
 	[BindProperty(SupportsGet = true)]
 	public string Email { get; set; } = string.Empty;
 
@@ -46,6 +39,13 @@ public class CreateModel : PageModel
 	[BindProperty(SupportsGet = true)]
 
 	public int Capacity { get; set; }
+
+	public CreateModel(UserManager<IdentityUser> userManager, RoomService roomService, BookingService bookingService)
+	{
+		_userManager = userManager;
+		_roomService = roomService;
+		_bookingService = bookingService;
+	}
 
 	public async Task<IActionResult> OnGet(int roomId, DateTime? checkIn, DateTime? checkOut)
 	{
@@ -91,7 +91,7 @@ public class CreateModel : PageModel
 		try
 		{
 			var user = await _userManager.GetUserAsync(User);
-			var userId = user.Id;
+			var userId = user!.Id;
 			var booking = new BookingDto
 			{
 				CheckIn = CheckIn,
@@ -114,10 +114,5 @@ public class CreateModel : PageModel
 			TempData["Message"] = ex.Message;
 			return Page();
 		}
-	}
-
-	public class InputModel
-	{
-
 	}
 }

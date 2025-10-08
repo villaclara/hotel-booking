@@ -18,6 +18,9 @@ public class BookingController : ControllerBase
 	}
 
 	[HttpPost]
+	[ProducesResponseType(StatusCodes.Status201Created)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public async Task<IActionResult> AddBooking([FromBody] BookingDto bookingDto)
 	{
 		if (!ModelState.IsValid || bookingDto == null)
@@ -48,7 +51,26 @@ public class BookingController : ControllerBase
 		}
 	}
 
+	[HttpGet]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	public async Task<IActionResult> GetAll([FromQuery] bool withNames = false)
+	{
+		if (!withNames)
+		{
+			var result = await _bookingService.GetAllAsync();
+			return Ok(result);
+
+		}
+		else
+		{
+			var result = await _bookingService.GetAllWithNamesAsync();
+			return Ok(result);
+		}
+	}
+
 	[HttpGet("{id:int}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetBooking(int id)
 	{
 		var result = await _bookingService.GetByIdAsync(id);
@@ -61,6 +83,9 @@ public class BookingController : ControllerBase
 	}
 
 	[HttpDelete("{id:int}")]
+	[ProducesResponseType(StatusCodes.Status204NoContent)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public async Task<IActionResult> DeleteBooking(int id)
 	{
 		try

@@ -16,6 +16,21 @@ public class AppDbContext : IdentityDbContext
 	{
 		base.OnModelCreating(builder);
 
+		// Set MySQL-specific lengths to avoid BLOB/TEXT primary key issues
+		builder.Entity<IdentityUser>(entity =>
+		{
+			entity.Property(u => u.Id).HasMaxLength(36); // UUID
+			entity.Property(u => u.NormalizedEmail).HasMaxLength(256);
+			entity.Property(u => u.NormalizedUserName).HasMaxLength(256);
+		});
+
+		builder.Entity<IdentityRole>(entity =>
+		{
+			entity.Property(r => r.Id).HasMaxLength(36);
+			entity.Property(r => r.NormalizedName).HasMaxLength(256);
+		});
+
+
 		builder.Entity<IdentityUser>().ToTable("Users");    // TODO - idk about it.	
 		builder.Entity<Hotel>().ToTable("Hotels");
 		builder.Entity<Room>().ToTable("Rooms");

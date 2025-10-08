@@ -1,9 +1,6 @@
 ﻿@page
 @model HotelBooking.API.Pages.Admin.Hotels.IndexModel
-@{
-}
 
-<!-- Alpine.js -->
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 <!-- hide x-cloak elements until Alpine boots -->
@@ -19,6 +16,15 @@
         <h1 class="text-3xl font-semibold text-gray-100 text-center mb-8">
             Admin - Hotels
         </h1>
+
+         <div class="flex justify-end mb-6">
+            <button type="button"
+                    x-on:click="openHotel = { Id: 0, Name: '', Description: '', Address: '' }"
+                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition">
+                + Add Hotel
+            </button>
+        </div>
+
 
         <!-- LIST -->
         <template x-if="hotels && hotels.length">
@@ -64,9 +70,7 @@
              class="bg-gray-800 rounded-2xl p-6 w-full max-w-lg relative">
             <h2 class="text-2xl font-semibold text-gray-100 mb-4">Edit Hotel</h2>
 
-            <!-- Server POST: form fields are bound with x-model so their values will post -->
             <form method="post" class="space-y-4">
-                <!-- Hidden id -->
                 <input type="hidden" name="HotelId" x-model="openHotel.Id" />
 
                 <div>
@@ -88,15 +92,26 @@
                 </div>
 
                 <div class="flex justify-end gap-3 mt-4">
-                    <button type="submit" name="action" value="Save"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
-                        Save
-                    </button>
+                    <template x-if="openHotel.Id">
+                        <button type="submit" name="action" value="Save"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+                            Save
+                        </button>
+                    </template>
 
-                    <button type="submit" name="action" value="Delete"
-                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium">
-                        Delete
-                    </button>
+                    <template x-if="!openHotel.Id">
+                        <button type="submit" name="action" value="Add"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium">
+                            + Add
+                        </button>
+                    </template>
+
+                    <template x-if="openHotel.Id">
+                        <button type="submit" name="action" value="Delete"
+                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium">
+                            Delete
+                        </button>
+                    </template>
 
                     <button type="button" x-on:click="close()"
                             class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium">
@@ -111,7 +126,6 @@
 <script>
     function hotelModal() {
         return {
-            // parse server-provided JSON safely; wrap JSON with single quotes so inner double-quotes are ok
             hotels: (function(){
                 try {
                     return JSON.parse('@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Hotels))') || [];
@@ -120,19 +134,13 @@
                     return [];
                 }
             })(),
-
-            openHotel: null, // currently opened hotel object (deep clone)
-
-            // open modal for the passed hotel object (deep copy so editing doesn't mutate list until save)
+            openHotel: null,
             open(hotel) {
                 this.openHotel = JSON.parse(JSON.stringify(hotel));
-                // ensure fields exist
                 this.openHotel.Name = this.openHotel.Name ?? '';
                 this.openHotel.Address = this.openHotel.Address ?? '';
                 this.openHotel.Description = this.openHotel.Description ?? '';
             },
-
-            // close modal
             close() {
                 this.openHotel = null;
             }

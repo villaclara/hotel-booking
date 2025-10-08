@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace HotelBooking.Application.Services;
 
+/// <summary>
+/// Provides CRUD operations related to Rooms of Hotels.
+/// </summary>
 public class RoomService
 {
 	private readonly IRoomRepository _roomRepository;
@@ -18,6 +21,13 @@ public class RoomService
 		_logger = logger;
 	}
 
+	/// <summary>
+	/// Creates a new room asynchronously.
+	/// </summary>
+	/// <param name="roomDto">The room data to create.</param>
+	/// <returns>The created <see cref="RoomDto"/>.</returns>
+	/// <exception cref="KeyNotFoundException">If the hotel does not exist or the created room is missing.</exception>
+	/// <exception cref="InvalidOperationException">If room creation fails.</exception>
 	public async Task<RoomDto> CreateAsync(RoomDto roomDto)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.PricePerNight, 1);
@@ -66,6 +76,11 @@ public class RoomService
 		};
 	}
 
+	/// <summary>
+	/// Retrieves a room by ID asynchronously.
+	/// </summary>
+	/// <param name="id">The room ID.</param>
+	/// <returns>The <see cref="RoomDto"/> if found; otherwise, <c>null</c>.</returns>
 	public async Task<RoomDto?> GetRoomByIdAsync(int id)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(id, 1);
@@ -84,6 +99,11 @@ public class RoomService
 			: null;
 	}
 
+	/// <summary>
+	/// Retrieves all rooms for a specific hotel asynchronously.
+	/// </summary>
+	/// <param name="hotelId">The hotel ID.</param>
+	/// <returns>A collection of <see cref="RoomDto"/>.</returns>
 	public async Task<IEnumerable<RoomDto>> GetAllByHotelAsync(int hotelId)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(hotelId, 1);
@@ -100,6 +120,13 @@ public class RoomService
 		});
 	}
 
+	/// <summary>
+	/// Updates an existing room asynchronously.
+	/// </summary>
+	/// <param name="roomDto">The updated room data.</param>
+	/// <returns>The updated <see cref="RoomDto"/>.</returns>
+	/// <exception cref="KeyNotFoundException">If the room does not exist.</exception>
+	/// <exception cref="InvalidOperationException">If update fails.</exception>
 	public async Task<RoomDto> UpdateAsync(RoomDto roomDto)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomDto.Id, 1);
@@ -139,6 +166,12 @@ public class RoomService
 		}
 	}
 
+	/// <summary>
+	/// Deletes a room by ID asynchronously.
+	/// </summary>
+	/// <param name="roomId">The room ID.</param>
+	/// <returns><c>true</c> if deletion succeeds; otherwise, <c>false</c>.</returns>
+	/// <exception cref="InvalidOperationException">If deletion fails.</exception>
 	public async Task<bool> DeleteAsync(int roomId)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(roomId, 1);

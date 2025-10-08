@@ -2,6 +2,9 @@
 
 namespace HotelBooking.Application.Dtos.Hotel;
 
+/// <summary>
+/// Data transfer object to pass data between service and repository layers.
+/// </summary>
 public class HotelWithRoomsDto
 {
 	/// <summary>

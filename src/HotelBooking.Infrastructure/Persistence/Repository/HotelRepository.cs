@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelBooking.Infrastructure.Persistence.Repository;
 
+/// <inheritdoc cref="IHotelRepository"/>
 public class HotelRepository : IHotelRepository
 {
 	private readonly AppDbContext _context;
@@ -13,6 +14,7 @@ public class HotelRepository : IHotelRepository
 		_context = context;
 	}
 
+	/// <inheritdoc/>
 	public async Task<Hotel> AddAsync(Hotel hotel)
 	{
 		await _context.Hotels.AddAsync(hotel);
@@ -20,6 +22,7 @@ public class HotelRepository : IHotelRepository
 		return hotel;
 	}
 
+	/// <inheritdoc/>
 	public async Task<bool> DeleteAsync(int id)
 	{
 		var hotel = await _context.Hotels.FirstOrDefaultAsync(h => h.Id == id);
@@ -33,14 +36,17 @@ public class HotelRepository : IHotelRepository
 		return true;
 	}
 
+	/// <inheritdoc/>
 	public async Task<Hotel?> GetByIdAsync(int id)
 	{
 		return await _context.Hotels.Include(h => h.Rooms).FirstOrDefaultAsync(h => h.Id == id);
 	}
 
+	/// <inheritdoc/>
 	public async Task<IEnumerable<Hotel>> GetAllAsync() =>
 		await _context.Hotels.Include(h => h.Rooms).ToListAsync();
 
+	/// <inheritdoc/>
 	public async Task<Hotel> UpdateAsync(Hotel hotel)
 	{
 		_context.Hotels.Update(hotel);
@@ -48,9 +54,11 @@ public class HotelRepository : IHotelRepository
 		return hotel;
 	}
 
+	/// <inheritdoc/>
 	public async Task<bool> ExistsAsync(int id) =>
 		await _context.Hotels.AnyAsync(h => h.Id == id);
 
+	/// <inheritdoc/>
 	public async Task<IEnumerable<Hotel>> GetAllWithRoomsByDates(DateTime? checkin, DateTime? checkout, string? city)
 	{
 		var query = _context.Hotels.Include(h => h.Rooms).ThenInclude(r => r.Bookings).AsQueryable();

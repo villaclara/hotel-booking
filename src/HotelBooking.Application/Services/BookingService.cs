@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace HotelBooking.Application.Services;
 
+/// <summary>
+/// Provides CRUD operations related to bookings.
+/// </summary>
 public class BookingService
 {
 	private readonly IBookingRepository _bookingRepository;
@@ -79,6 +82,11 @@ public class BookingService
 		};
 	}
 
+	/// <summary>
+	/// Gets all bookings for the user if specified, else all bookings.
+	/// </summary>
+	/// <param name="userId">GUID as string of user Id.</param>
+	/// <returns><see cref="IEnumerable{T}"/> of <see cref="BookingDto"/> objects.</returns>
 	public async Task<IEnumerable<BookingDto>> GetAllAsync(string? userId = null)
 	{
 		var bookings = await _bookingRepository.GetAllWithParamsAsync(userId);
@@ -92,6 +100,12 @@ public class BookingService
 			CheckOut = b.CheckOut
 		});
 	}
+
+	/// <summary>
+	/// Gets all bookings for the user if specified, else all bookings.
+	/// </summary>
+	/// <param name="userId">GUID as string of user Id.</param>
+	/// <returns><see cref="IEnumerable{T}"/> of <see cref="BookingWithNamesDto"/> objects.</returns>
 	public async Task<IEnumerable<BookingWithNamesDto>> GetAllWithNamesAsync(string? userId = null)
 	{
 		var bookings = await _bookingRepository.GetAllWithParamsAsync(userId);
@@ -108,6 +122,12 @@ public class BookingService
 		});
 	}
 
+	/// <summary>
+	/// Gets bookings by Id.
+	/// </summary>
+	/// <param name="bookingId">Id of boooking.</param>
+	/// <returns><see cref="IEnumerable{T}"/> of <see cref="BookingDto"/> objects.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Throws when the id is < 1.</exception>
 	public async Task<BookingDto?> GetByIdAsync(int bookingId)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(bookingId, 1);
@@ -129,6 +149,13 @@ public class BookingService
 		};
 	}
 
+	/// <summary>
+	/// Deletes the booking by id.
+	/// </summary>
+	/// <param name="bookingId">Id of booking.</param>
+	/// <returns>Boolean value representing whether the deletion was successfull.</returns>
+	/// <exception cref="InvalidOperationException">When internal error happens.</exception>
+	/// <exception cref="ArgumentOutOfRangeException">When bookingId < 1.</exception>
 	public async Task<bool> DeleteAsync(int bookingId)
 	{
 		ArgumentOutOfRangeException.ThrowIfLessThan(bookingId, 1);

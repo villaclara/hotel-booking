@@ -14,9 +14,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// SQLITE FOR TESTING
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//{
+//	options.UseSqlite("Data Source=hotelbooking.db");
+//});
+
+// MYSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-	options.UseSqlite("Data Source=hotelbooking.db");
+	options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+		ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")));
 });
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -63,10 +71,16 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IStatsRepository, StatsRepository>(sp =>
+{
+	var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+	return new StatsRepository(connectionString!);
+});
 
 builder.Services.AddScoped<HotelService>();
 builder.Services.AddScoped<RoomService>();
 builder.Services.AddScoped<BookingService>();
+builder.Services.AddScoped<StatsService>();
 
 var app = builder.Build();
 
@@ -110,10 +124,18 @@ if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
 	app.UseSwaggerUI();
+
+	app.UseDeveloperExceptionPage();
+}
+else
+{
+	app.UseExceptionHandler("/Error");
+	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapRazorPages();
