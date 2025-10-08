@@ -34,6 +34,7 @@
                         @if (isLoggedIn && User.IsInRole("Admin"))
                         {
                             <a asp-page="/Admin/Hotels/Index" class="text-gray-200 hover:text-blue-400 font-medium">Manage</a>
+                            <a asp-page="/Admin/Stats" class="text-gray-200 hover:text-blue-400 font-medium">Stats</a>
                         }
                     </div>
                 </div>
