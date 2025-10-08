@@ -15,17 +15,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // SQLITE FOR TESTING
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//{
-//	options.UseSqlite("Data Source=hotelbooking.db");
-//});
-
-// MYSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-	options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-		ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseSqlite("Data Source=hotelbooking.db");
 });
+
+// MYSQL
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//{
+//	options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+//		ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")));
+//});
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
